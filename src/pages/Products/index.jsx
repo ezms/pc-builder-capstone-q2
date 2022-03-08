@@ -24,6 +24,7 @@ const Products = () => {
   const [everyProduct, setEveryProduct] = useState([]);
 
   const { token } = useAuth();
+  let newProducts = [];
 
   const categoryFilter = products[category]?.filter(
     (element) =>
@@ -45,18 +46,30 @@ const Products = () => {
       .then((response) => {
         setProducts(response.data);
       })
-      .catch((err) => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    let newProducts = [];
-    Object.keys(products).forEach((element) =>
-      products[element].forEach((item) => {
-        newProducts.push(item);
+      .then((_) => {
+        let newProducts = [];
+        if (products.length !== 0) {
+          products.forEach((product) => {
+            newProducts.push(product);
+          });
+          setEveryProduct(newProducts);
+        }
       })
-    );
-    setEveryProduct(newProducts);
-  }, [products]);
+      .catch((err) => console.log(err));
+  }, [products.length]);
+
+  /*Comentário intencional para discutir a resolução abaixo:
+   useEffect(() => {
+     let newProducts = [];
+     console.log(products);
+     products.forEach((element) =>
+       products.element.forEach((item) => {
+         newProducts.push(item);
+       })
+     );
+   setEveryProduct(newProducts);
+  }, [products.length]);
+  */
 
   const addToCart = (item) => {
     const userId = localStorage.getItem("userID");
