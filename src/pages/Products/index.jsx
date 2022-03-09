@@ -19,7 +19,7 @@ const Products = () => {
 
   const [searchInput, setSearchInput] = useState("");
 
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState(0);
 
   const [categories, setCategories] = useState([]);
 
@@ -27,36 +27,29 @@ const Products = () => {
 
   const { token } = useAuth();
 
-  const categoryFilter = products[category]?.filter(
-    (element) =>
-      element.model.toLowerCase().includes(searchInput.toLowerCase()) ||
-      element.price.toString().includes(searchInput) ||
-      Number(searchInput) <= element.price
-  );
+  // const categoryFilter = products[category]?.filter(
+  //   (element) =>
+  //     element.model.toLowerCase().includes(searchInput.toLowerCase()) ||
+  //     element.price.toString().includes(searchInput) ||
+  //     Number(searchInput) <= element.price
+  // );
 
-  const everyProductFilter = everyProduct.filter(
-    (element) =>
-      element.model.toLowerCase().includes(searchInput.toLowerCase()) ||
-      element.price.toString().includes(searchInput) ||
-      Number(searchInput) <= element.price
-  );
+  // const everyProductFilter = everyProduct.filter(
+  //   (element) =>
+  //     element.model.toLowerCase().includes(searchInput.toLowerCase()) ||
+  //     element.price.toString().includes(searchInput) ||
+  //     Number(searchInput) <= element.price
+  // );
 
   useEffect(() => {
     api
       .get("/products")
       .then((response) => {
         setProducts(response.data);
+        setEveryProduct(response.data);
       })
       .catch((err) => console.log(err));
   }, []);
-
-  useEffect(() => {
-    let newProducts = [];
-    products.forEach((item) => {
-      newProducts.push(item);
-    });
-    setEveryProduct(newProducts);
-  }, [products]);
 
   useEffect(() => {
     api
@@ -66,6 +59,19 @@ const Products = () => {
       })
       .catch((err) => console.log(err));
   }, []);
+
+  useEffect(() => {
+    if (!category) {
+      setProducts(everyProduct);
+    } else {
+      api
+        .get(`/categories/${category}`)
+        .then((response) => {
+          setProducts(response.data.products);
+        })
+        .catch((err) => console.log(err));
+    }
+  }, [category]);
 
   const addToCart = (item) => {
     const userId = localStorage.getItem("userID");
@@ -139,74 +145,104 @@ const Products = () => {
         </div>
 
         <div id="products">
-          {searchInput ? (
-            categoryFilter?.length > 0 || everyProductFilter?.length > 0 ? (
-              category ? (
-                categoryFilter.map((element, index) => (
-                  <div id="card" key={index}>
-                    <div id="imageDiv">
-                      <img src={element.img} alt={element.model} />
-                    </div>
-                    <div id="contentDiv">
-                      <div id="info">
-                        <h3>{element.model}</h3>
-                        <p onClick={() => handleOpenModal(element)}>
-                          Exibir detalhes <AiOutlinePlusCircle id="plusIcon" />
-                        </p>
-                        <h3>
-                          {element.price.toLocaleString("pt-BR", {
-                            style: "currency",
-                            currency: "BRL",
-                          })}
-                        </h3>
-                      </div>
-                      <button
-                        onClick={() => {
-                          addToCart(element);
-                        }}
-                      >
-                        Adicionar
-                      </button>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                everyProductFilter.map((element, index) => (
-                  <div id="card" key={index}>
-                    <div id="imageDiv">
-                      <img src={element.img} alt={element.model} />
-                    </div>
-                    <div id="contentDiv">
-                      <div id="info">
-                        <h3>{element.model}</h3>
-                        <p onClick={() => handleOpenModal(element)}>
-                          Exibir detalhes <AiOutlinePlusCircle id="plusIcon" />
-                        </p>
-                        <h3>
-                          {element.price.toLocaleString("pt-BR", {
-                            style: "currency",
-                            currency: "BRL",
-                          })}
-                        </h3>
-                      </div>
-                      <button
-                        onClick={() => {
-                          addToCart(element);
-                        }}
-                      >
-                        Adicionar
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )
-            ) : (
-              <div id="empty">
-                <h3>Nenhum produto encontrado...</h3>
-              </div>
-            )
-          ) : category ? (
-            products[category]?.map((element, index) => (
+          {
+            // searchInput ? (
+            //   categoryFilter?.length > 0 || everyProductFilter?.length > 0 ? (
+            //     category ? (
+            //       categoryFilter.map((element, index) => (
+            //         <div id="card" key={index}>
+            //           <div id="imageDiv">
+            //             <img src={element.img} alt={element.model} />
+            //           </div>
+            //           <div id="contentDiv">
+            //             <div id="info">
+            //               <h3>{element.model}</h3>
+            //               <p onClick={() => handleOpenModal(element)}>
+            //                 Exibir detalhes <AiOutlinePlusCircle id="plusIcon" />
+            //               </p>
+            //               <h3>
+            //                 {element.price.toLocaleString("pt-BR", {
+            //                   style: "currency",
+            //                   currency: "BRL",
+            //                 })}
+            //               </h3>
+            //             </div>
+            //             <button
+            //               onClick={() => {
+            //                 addToCart(element);
+            //               }}
+            //             >
+            //               Adicionar
+            //             </button>
+            //           </div>
+            //         </div>
+            //       ))
+            //     ) : (
+            //       everyProductFilter.map((element, index) => (
+            //         <div id="card" key={index}>
+            //           <div id="imageDiv">
+            //             <img src={element.img} alt={element.model} />
+            //           </div>
+            //           <div id="contentDiv">
+            //             <div id="info">
+            //               <h3>{element.model}</h3>
+            //               <p onClick={() => handleOpenModal(element)}>
+            //                 Exibir detalhes <AiOutlinePlusCircle id="plusIcon" />
+            //               </p>
+            //               <h3>
+            //                 {element.price.toLocaleString("pt-BR", {
+            //                   style: "currency",
+            //                   currency: "BRL",
+            //                 })}
+            //               </h3>
+            //             </div>
+            //             <button
+            //               onClick={() => {
+            //                 addToCart(element);
+            //               }}
+            //             >
+            //               Adicionar
+            //             </button>
+            //           </div>
+            //         </div>
+            //       ))
+            //     )
+            //   ) : (
+            //     <div id="empty">
+            //       <h3>Nenhum produto encontrado...</h3>
+            //     </div>
+            //   )
+            // ) : category ? (
+            //   products[category]?.map((element, index) => (
+            //     <div id="card" key={index}>
+            //       <div id="imageDiv">
+            //         <img src={element.img} alt={element.model} />
+            //       </div>
+            //       <div id="contentDiv">
+            //         <div id="info">
+            //           <h3>{element.model}</h3>
+            //           <p onClick={() => handleOpenModal(element)}>
+            //             Exibir detalhes <AiOutlinePlusCircle id="plusIcon" />
+            //           </p>
+            //           <h3>
+            //             {element.price.toLocaleString("pt-BR", {
+            //               style: "currency",
+            //               currency: "BRL",
+            //             })}
+            //           </h3>
+            //         </div>
+            //         <button
+            //           onClick={() => {
+            //             addToCart(element);
+            //           }}
+            //         >
+            //           Adicionar
+            //         </button>
+            //       </div>
+            //     </div>
+            //   ))
+            // ) :
+            products.map((element, index) => (
               <div id="card" key={index}>
                 <div id="imageDiv">
                   <img src={element.img} alt={element.model} />
@@ -234,36 +270,7 @@ const Products = () => {
                 </div>
               </div>
             ))
-          ) : (
-            everyProduct.map((element, index) => (
-              <div id="card" key={index}>
-                <div id="imageDiv">
-                  <img src={element.img} alt={element.model} />
-                </div>
-                <div id="contentDiv">
-                  <div id="info">
-                    <h3>{element.model}</h3>
-                    <p onClick={() => handleOpenModal(element)}>
-                      Exibir detalhes <AiOutlinePlusCircle id="plusIcon" />
-                    </p>
-                    <h3>
-                      {element.price.toLocaleString("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      })}
-                    </h3>
-                  </div>
-                  <button
-                    onClick={() => {
-                      addToCart(element);
-                    }}
-                  >
-                    Adicionar
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
+          }
         </div>
       </Container>
     </>
