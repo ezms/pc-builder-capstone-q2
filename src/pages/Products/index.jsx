@@ -74,17 +74,23 @@ const Products = () => {
   }, [category]);
 
   const addToCart = (item) => {
-    const userId = localStorage.getItem("userID");
+    const token = JSON.parse(localStorage.getItem("userToken"));
 
     if (token) {
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
       api
-        .post(
-          "/cart/",
-          { ...item, userId: userId },
-          { headers: { Authorization: `Bearer ${token}` } }
-        )
-        .then(() => toast.success(`${item.model} foi adicionado ao carrinho!`))
-        .catch(() => toast.error("Ops, algo deu errado!"));
+        .post(`/cart/${item.product_id}`, "", {
+          headers: headers,
+        })
+        .then(() => {
+          toast.success(`${item.model} foi adicionado ao carrinho!`);
+        })
+        .catch((err) => {
+          toast.error("Ops, algo deu errado!");
+        });
     } else {
       toast.info("Efetue login para adicionar produtos no carrinho!");
       history.push("/sign");
