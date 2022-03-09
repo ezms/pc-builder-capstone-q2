@@ -13,7 +13,7 @@ import { toast } from "react-toastify";
 const CategoryProducts = () => {
   const history = useHistory();
 
-  const { isOpen, handleOpenModal } = useModal()
+  const { isOpen, handleOpenModal } = useModal();
 
   const { category } = useParams();
 
@@ -35,17 +35,26 @@ const CategoryProducts = () => {
 
   const filter = products[category]
     ? products[category].filter(
-      (element) =>
-        element.model.toLowerCase().includes(searchInput.toLowerCase()) ||
-        element.price.toString().includes(searchInput) ||
-        Number(searchInput) <= element.price
-    )
+        (element) =>
+          element.model.toLowerCase().includes(searchInput.toLowerCase()) ||
+          element.price.toString().includes(searchInput) ||
+          Number(searchInput) <= element.price
+      )
     : [];
 
   return (
     <>
-      <Header buttonOut1="Login" buttonOut2="Monte seu PC" buttonIn1="Monte seu PC" buttonIn2="Logout" />
-      {isOpen && <Modal><ModalDetails /></Modal>}
+      <Header
+        buttonOut1="Login"
+        buttonOut2="Monte seu PC"
+        buttonIn1="Monte seu PC"
+        buttonIn2="Logout"
+      />
+      {isOpen && (
+        <Modal>
+          <ModalDetails />
+        </Modal>
+      )}
       <Container>
         <div id="banner">
           <h3>PRODUTOS</h3>
@@ -68,16 +77,22 @@ const CategoryProducts = () => {
                 <div id="contentDiv">
                   <div id="info">
                     <h3>{element.model}</h3>
-                    <p onClick={() => handleOpenModal(element)} >
+                    <p onClick={() => handleOpenModal(element)}>
                       Exibir detalhes <AiOutlinePlusCircle id="plusIcon" />
                     </p>
-                    <h3>Preço: {(element.price).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</h3>
+                    <h3>
+                      Preço:{" "}
+                      {element.price.toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </h3>
                   </div>
                   <button
                     onClick={() => {
-                      addToBuild(element, category)
-                      history.push("/build")
-                      toast.success(`${element.model} foi adicionado`)
+                      addToBuild(element, category);
+                      history.push("/build");
+                      toast.success(`${element.model} foi adicionado`);
                     }}
                   >
                     Adicionar
@@ -94,16 +109,22 @@ const CategoryProducts = () => {
                 <div id="contentDiv">
                   <div id="info">
                     <h3>{element.model}</h3>
-                    <p onClick={() => handleOpenModal(element)} >
+                    <p onClick={() => handleOpenModal(element)}>
                       Exibir detalhes <AiOutlinePlusCircle id="plusIcon" />
                     </p>
-                    <h3>Preço: {(element.price).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</h3>
+                    <h3>
+                      Preço:{" "}
+                      {element.price.toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </h3>
                   </div>
                   <button
                     onClick={() => {
-                      addToBuild(element, category)
-                      history.push("/build")
-                      toast.success(`${element.model} foi adicionado`)
+                      addToBuild(element, category);
+                      history.push("/build");
+                      toast.success(`${element.model} foi adicionado`);
                     }}
                   >
                     Adicionar
