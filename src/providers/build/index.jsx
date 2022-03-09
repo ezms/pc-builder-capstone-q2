@@ -18,13 +18,13 @@ export const BuildProvider = ({ children }) => {
     font: [],
     peripherals: [],
   });
-
   const [buildTotal, setBuildTotal] = useState(0);
   const [buildWatts, setBuildWatts] = useState(0);
   const [buildProducts, setBuildProducts] = useState([]);
   const { token } = useAuth();
   const history = useHistory();
   const [checkErrors, setCheckErrors] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     let products = [];
@@ -119,7 +119,7 @@ export const BuildProvider = ({ children }) => {
     const cooler = buildSchema["cooler"][0]?.socketCompatibility || "";
     if (moboSocket && cooler && !cooler.includes(moboSocket)) {
       errorMsgs.push(
-        `O Cooler escolhido não possui suporte ao Socket atual: ${moboSocket}`
+        `O Cooler escolhido não possui suporte ao Socket da Placa Mãe atual: ${moboSocket}`
       );
     }
 
@@ -238,7 +238,8 @@ export const BuildProvider = ({ children }) => {
 
   // console.log(buildProducts);
 
-  const buildCheckout = () => {
+  const buildCheckout = async () => {
+    setIsLoading(true);
     const userId = localStorage.getItem("userID");
 
     // Split quantity items into multiples of the same object
@@ -249,40 +250,44 @@ export const BuildProvider = ({ children }) => {
         cartStructure.push({ ...buildProducts[key], quantity: 1 });
       }
     }
-    // Remove the section above if the items aren't going to be split and replace cartStructure.map to buildProducts.map bellow
 
     if (token) {
-      cartStructure.forEach((item) => {
-        api.post(
-          "/cart/",
-          { ...item, userId: userId },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-      });
-      // buildProducts.forEach((item) => {
-      //   api.post(
-      //     "/cart/",
-      //     { ...item, userId: userId },
-      //     { headers: { Authorization: `Bearer ${token}` } }
-      //   );
-      // });
-      toast.success("Produtos enviados ao carrinho");
-      localStorage.removeItem("build");
-      setBuildSchema({
-        cpu: [],
-        cooler: [],
-        gpu: [],
-        motherboard: [],
-        ram: [],
-        drive: [],
-        case: [],
-        font: [],
-        peripherals: [],
-      });
-      history.push("/cart/");
+      await Promise.all(
+        cartStructure.map(async (item) => {
+          await api.post(
+            "/cart/",
+            { ...item, userId: userId },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+        })
+      )
+        .then(() => {
+          toast.success("Produtos enviados ao carrinho");
+          localStorage.removeItem("build");
+          setBuildSchema({
+            cpu: [],
+            cooler: [],
+            gpu: [],
+            motherboard: [],
+            ram: [],
+            drive: [],
+            case: [],
+            font: [],
+            peripherals: [],
+          });
+          history.push("/cart/");
+          setIsLoading(false);
+        })
+        .catch(() => {
+          toast.error("Token expirado. Efetue login novamente", {
+            autoClose: 3000,
+          });
+          setIsLoading(false);
+        });
     } else {
       toast.info("Efetue login para finalizar a montagem");
       history.push("/sign");
+      setIsLoading(false);
     }
   };
 
@@ -297,6 +302,8 @@ export const BuildProvider = ({ children }) => {
         buildCheckout,
         checkErrors,
         buildProducts,
+        isLoading,
+        setIsLoading,
       }}
     >
       {children}

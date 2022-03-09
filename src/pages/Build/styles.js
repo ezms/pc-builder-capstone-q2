@@ -89,13 +89,38 @@ export const ContainerMain = styled.div`
   .card {
     width: 100%;
     max-width: 235px;
-    min-height: 340px;
+    min-height: 370px;
     border-radius: 5px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     border: 2px solid var(--gray2);
+    /* animation: fade_in_card 0.5s 1 ease-in-out;
+    @keyframes fade_in_card {
+      from {
+        opacity: 0;
+        transform: translateX(-10px);
+      }
+    } */
+
+    &:nth-child(odd) {
+      animation: fade_in_card 0.45s 1 ease-in-out;
+    }
+    &:nth-child(even) {
+      animation: fade_in_card 0.5s 1 ease-in-out;
+    }
+
+    @keyframes fade_in_card {
+      0% {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      70% {
+        opacity: 1;
+        transform: scale(1.05);
+      }
+    }
 
     :hover {
       color: var(--gray1);
@@ -133,6 +158,7 @@ export const ContainerMain = styled.div`
         background: #fff;
         display: grid;
         place-items: center;
+
         img {
           width: 130px;
           height: 130px;
@@ -190,7 +216,11 @@ export const ContainerMain = styled.div`
 `;
 
 export const ContainerFooter = styled.div`
-  padding: 20px 0;
+  padding: 10px 0;
   display: flex;
   justify-content: flex-end;
+
+  @media screen and (max-width: 600px) {
+    justify-content: center;
+  }
 `;
