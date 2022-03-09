@@ -15,11 +15,13 @@ const Products = () => {
 
   const { isOpen, handleOpenModal } = useModal();
 
-  const [products, setProducts] = useState({});
+  const [products, setProducts] = useState([]);
 
   const [searchInput, setSearchInput] = useState("");
 
   const [category, setCategory] = useState("");
+
+  const [categories, setCategories] = useState([]);
 
   const [everyProduct, setEveryProduct] = useState([]);
 
@@ -50,13 +52,20 @@ const Products = () => {
 
   useEffect(() => {
     let newProducts = [];
-    Object.keys(products).forEach((element) =>
-      products[element].forEach((item) => {
-        newProducts.push(item);
-      })
-    );
+    products.forEach((item) => {
+      newProducts.push(item);
+    });
     setEveryProduct(newProducts);
   }, [products]);
+
+  useEffect(() => {
+    api
+      .get("/categories")
+      .then((response) => {
+        setCategories(response.data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   const addToCart = (item) => {
     const userId = localStorage.getItem("userID");
@@ -109,6 +118,7 @@ const Products = () => {
             id="categories"
           >
             <option value="">Todos</option>
+            {/* <option value="">Todos</option>
             <option value="drive">Armazenamento</option>
             <option value="cooler">Cooler</option>
             <option value="font">Fonte</option>
@@ -117,7 +127,14 @@ const Products = () => {
             <option value="peripherals">Periféricos</option>
             <option value="gpu">Placa de vídeo</option>
             <option value="motherboard">Placa mãe</option>
-            <option value="cpu">Processador</option>
+            <option value="cpu">Processador</option> */}
+            {categories.map((item, index) => {
+              return (
+                <option key={index} value={item.category_id}>
+                  {item.name}
+                </option>
+              );
+            })}
           </select>
         </div>
 
