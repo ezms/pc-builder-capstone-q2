@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { useAuth } from "../../providers/auth";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { validateCPF } from 'validations-br';
 
 const RegisterContainer = () => {
   const { signUp } = useAuth();
@@ -12,6 +13,10 @@ const RegisterContainer = () => {
       .string()
       .email("Digite um email válido")
       .required("Digite seu melhor email"),
+    cpf: yup
+      .string()
+      .required("Digite seu CPF")
+      .test("cpf", "CPF não é válido", value => validateCPF(value)),
     password: yup.string().required("Digite uma senha"),
     confirmPass: yup
       .string()
@@ -52,6 +57,15 @@ const RegisterContainer = () => {
           placeholder="Email"
         />
         <label>{errors.email?.message}</label>
+      </div>
+      <div className="inputWrap">
+        <input
+          type="text"
+          {...register("cpf")}
+          required={errors.cpf ? true : false}
+          placeholder="CPF"
+        />
+        <label>{errors.cpf?.message}</label>
       </div>
       <div className="inputWrap">
         <input

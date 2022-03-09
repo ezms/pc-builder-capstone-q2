@@ -2,6 +2,7 @@ import api from "../../services/api";
 import { createContext, useContext, useState } from "react";
 import { toast } from "react-toastify";
 import { useHistory } from "react-router";
+import jwt_decode from "jwt-decode";
 
 export const AuthContext = createContext();
 
@@ -17,33 +18,27 @@ export const AuthProvider = ({ children }) => {
   const signIn = (data) => {
     const localStorageProducts = localStorage.getItem("build");
     api
-      .post("/login/", data)
+      .post("/user/login", data)
       .then((response) => {
         localStorage.setItem(
           "userToken",
-          JSON.stringify(response.data.accessToken)
+          JSON.stringify(response.data.access_token)
         );
-        localStorage.setItem("userID", JSON.stringify(response.data.user.id));
-        setToken(response.data.accessToken);
+        let decoded = jwt_decode(response.data.access_token)
+        setToken(response.data.access_token);
+        localStorage.setItem("userID", JSON.stringify(decoded.sub.user_id));
         localStorageProducts ? history.push("/build") : history.push("/");
-        toast.success(`Bem vindo ${response.data.user.name}!`);
+        toast.success(`Bem vindo ${response.data.name}!`);
       })
       .catch(() => toast.error("Ops, algo deu errado!"));
   };
 
   const signUp = (data) => {
-    const localStorageProducts = localStorage.getItem("build");
     api
-      .post("/register/", data)
+      .post("/user/register", data)
       .then((response) => {
-        localStorage.setItem(
-          "userToken",
-          JSON.stringify(response.data.accessToken)
-        );
-        localStorage.setItem("userID", JSON.stringify(response.data.user.id));
-        setToken(response.data.accessToken);
-        localStorageProducts ? history.push("/build") : history.push("/");
-        toast.success(`Bem vindo ${response.data.user.name}!`);
+        localStorage.setItem("userID", JSON.stringify(response.data.user_id));
+        toast.success(`${response.data.name} bem vindo! Faça seu login para acessar o site!`);
       })
       .catch(() => toast.error("Ops, algo deu errado!"));
   };
