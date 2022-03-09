@@ -22,6 +22,8 @@ const Products = () => {
 
   const [categories, setCategories] = useState([]);
 
+  const [filteredProducts, setFilteredProducts] = useState([]);
+
   const [everyProduct, setEveryProduct] = useState([]);
 
   useEffect(() => {
@@ -29,11 +31,11 @@ const Products = () => {
       let filtered = products.filter((item) =>
         item.model.toLowerCase().includes(searchInput.toLowerCase())
       );
-      setProducts(filtered);
+      setFilteredProducts(filtered);
     } else {
-      setProducts(everyProduct);
+      setFilteredProducts([]);
     }
-  }, [searchInput]);
+  }, [searchInput, products]);
 
   useEffect(() => {
     api
@@ -141,7 +143,36 @@ const Products = () => {
         </div>
 
         <div id="products">
-          {products.length > 0 ? (
+          {filteredProducts.length > 0 && searchInput.length > 0 ? (
+            filteredProducts.map((element, index) => (
+              <div id="card" key={index}>
+                <div id="imageDiv">
+                  <img src={element.img} alt={element.model} />
+                </div>
+                <div id="contentDiv">
+                  <div id="info">
+                    <h3>{element.model}</h3>
+                    <p onClick={() => handleOpenModal(element)}>
+                      Exibir detalhes <AiOutlinePlusCircle id="plusIcon" />
+                    </p>
+                    <h3>
+                      {element.price.toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => {
+                      addToCart(element);
+                    }}
+                  >
+                    Adicionar
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : products.length > 0 && !searchInput.length ? (
             products.map((element, index) => (
               <div id="card" key={index}>
                 <div id="imageDiv">
@@ -170,7 +201,7 @@ const Products = () => {
                 </div>
               </div>
             ))
-          ) : !products.length && searchInput.length > 0 ? (
+          ) : !filteredProducts.length && searchInput.length > 0 ? (
             <div id="empty">
               <h3>Nenhum produto encontrado...</h3>
             </div>
