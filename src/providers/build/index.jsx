@@ -45,7 +45,7 @@ export const BuildProvider = ({ children }) => {
     setBuildWatts(totalWatts);
     setBuildProducts(products);
     checkCompatibility();
-  }, [/*buildSchema*/]);
+  }, [buildSchema]);
 
   useEffect(() => {
     if (localStorage.getItem("build")) {
