@@ -34,15 +34,27 @@ const UserProvider = ({ children }) => {
   const setEnvironment = () => {
     setUserId(localStorage.getItem("userID"));
     api
+      .get(`/address`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        const addressData = res.data[res.data.length - 1] || {};
+        // const cardData = res.data.card || {};
+        // const userData = res.data || {};
+        setUserAddress(addressData);
+        // setUserCardInfo(cardData);
+        // setUserInfo(userData);
+      });
+    api
       .get(`/user`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
-        const addressData = res.data.address || {};
-        const cardData = res.data.card || {};
+        // const addressData = res.data[res.data.length - 1] || {};
+        // const cardData = res.data.card || {};
         const userData = res.data || {};
-        setUserAddress(addressData);
-        setUserCardInfo(cardData);
+        // setUserAddress(addressData);
+        // setUserCardInfo(cardData);
         setUserInfo(userData);
       });
   };
@@ -101,13 +113,9 @@ const UserProvider = ({ children }) => {
 
   const removeAddress = () => {
     api
-      .patch(
-        `/users/${userId}`,
-        { address: {} },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      )
+      .delete(`/address/${userAddress.address_id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         toast.success("Endereço removido com sucesso");
         setEnvironment();
