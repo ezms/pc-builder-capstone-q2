@@ -28,9 +28,16 @@ export const AuthProvider = ({ children }) => {
         setToken(response.data.access_token);
         localStorage.setItem("userID", JSON.stringify(decoded.sub.user_id));
         localStorageProducts ? history.push("/build") : history.push("/");
-        toast.success(`Bem vindo ${response.data.name}!`);
+        toast.success(`Bem vindo ${decoded.sub.name}!`);
       })
-      .catch(() => toast.error("Ops, algo deu errado!"));
+      .catch((err) => {
+        let status = err.response.status
+        if (status !== 500 && status !== 422) {
+          toast.error(err.response.data.error)
+        } else {
+          toast.error("Ops, algo deu errado!")
+        }
+      });
   };
 
   const signUp = (data) => {
@@ -38,9 +45,19 @@ export const AuthProvider = ({ children }) => {
       .post("/user/register", data)
       .then((response) => {
         localStorage.setItem("userID", JSON.stringify(response.data.user_id));
-        toast.success(`${response.data.name} bem vindo! Faça seu login para acessar o site!`);
+        toast.success(
+          `Um email de confirmação foi enviado para ${response.data.email}, verifique o email para efetuar o login!`
+        );
       })
-      .catch(() => toast.error("Ops, algo deu errado!"));
+      .catch((err) => {
+        console.log(err)
+        let status = err.response.status
+        if (status !== 500 && status !== 422) {
+          toast.error(err.response.data.error)
+        } else {
+          toast.error("Ops, algo deu errado!")
+        }
+      });
   };
 
   const signOut = () => {
