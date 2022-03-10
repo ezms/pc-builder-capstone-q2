@@ -14,7 +14,7 @@ const Sign = () => {
 
   return (
     <>
-      <Header buttonOut1="Produtos" buttonOut2="Monte seu PC" />
+      <Header buttonOut1="Produtos" buttonOut2="Login" />
       <SignContainer>
         <LoginContainer />
         <RegisterContainer />
