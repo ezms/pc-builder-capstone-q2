@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }) => {
         setToken(response.data.access_token);
         localStorage.setItem("userID", JSON.stringify(decoded.sub.user_id));
         localStorageProducts ? history.push("/build") : history.push("/");
-        toast.success(`Bem vindo ${response.data.name}!`);
+        toast.success(`Bem vindo ${decoded.sub.name}!`);
       })
       .catch((err) => {
         let status = err.response.status
