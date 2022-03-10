@@ -87,13 +87,9 @@ const UserProvider = ({ children }) => {
   const addAddress = (event) => {
     event.preventDefault();
     api
-      .patch(
-        `/users/${userId}`,
-        { address: cepResults },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      )
+      .post("/address", cepResults, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         toast.success("Endereço cadastrado com sucesso");
         setEnvironment();

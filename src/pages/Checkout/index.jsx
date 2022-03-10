@@ -202,7 +202,7 @@ export const Checkout = () => {
                         onChange={(e) =>
                           setCepResults({
                             ...cepResults,
-                            numero: e.target.value,
+                            numero: Number(e.target.value),
                           })
                         }
                       />
@@ -212,9 +212,7 @@ export const Checkout = () => {
                         size="md"
                         variant="outlined"
                         disabled={
-                          !Object.values(cepResults).every(
-                            (item) => item.length
-                          )
+                          !Object.values(cepResults).every((item) => item)
                         }
                         onClick={addAddress}
                       >
