@@ -21,17 +21,19 @@ const Cart = () => {
   const userID = localStorage.getItem("userID") || "";
 
   useEffect(() => {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
     api
-      .get(`/cart?userId=${userID}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      .get("/cart", {
+        headers: headers,
       })
       .then((response) => {
-        setCart(response.data);
+        setCart(response.data.products);
       })
       .catch((err) => console.log(err));
-  }, [cart]);
+  }, []);
 
   if (!token) {
     return <Redirect to="/sign" />;
@@ -44,7 +46,7 @@ const Cart = () => {
           <ModalDetails />
         </Modal>
       )}
-      <Header cart={false} buttonIn1="Monte seu PC" buttonIn2="Logout" />
+      <Header cart={false} buttonIn1="Produtos" buttonIn2="Logout" />
       <CartContainer>
         <div id="topContainer">
           <h1>Carrinho</h1>
