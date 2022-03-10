@@ -11,14 +11,36 @@ export const CartProvider = ({ children }) => {
   const { token } = useAuth();
 
   const clearCart = () => {
-    cart.forEach((item) => {
-      api.delete(`/cart/${item.id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    let timer = 100;
+    const awaitClear = Promise.all(
+      cart.map(
+        (item) =>
+          new Promise((res) =>
+            setTimeout(() => {
+              api
+                .delete(`/cart/${item.product_id}`, { headers: headers })
+                .then((resp) => console.log(resp))
+                .catch((err) => console.log(err));
+              res(true);
+            }, (timer += 300))
+          )
+      )
+    );
+    toast.promise(awaitClear, {
+      pending: "Removendo todos os produtos...",
+      success: {
+        render({ data }) {
+          setCart([]);
+          return `Produtos removidos com sucesso`;
         },
-      });
+      },
+      error: "Oops, ocorreu um erro ao remover todos os produtos",
     });
-    toast.success(`Todos os produtos foram removidos do carrinho.`);
   };
 
   return (

@@ -34,7 +34,7 @@ const UserProvider = ({ children }) => {
   const setEnvironment = () => {
     setUserId(localStorage.getItem("userID"));
     api
-      .get(`/users/${userId}`, {
+      .get(`/user`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
