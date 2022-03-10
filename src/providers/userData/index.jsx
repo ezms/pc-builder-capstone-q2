@@ -34,15 +34,19 @@ const UserProvider = ({ children }) => {
   const setEnvironment = () => {
     setUserId(localStorage.getItem("userID"));
     api
+      .get(`/address`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        const addressData = res.data[res.data.length - 1] || {};
+        setUserAddress(addressData);
+      });
+    api
       .get(`/user`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
-        const addressData = res.data.address || {};
-        const cardData = res.data.card || {};
         const userData = res.data || {};
-        setUserAddress(addressData);
-        setUserCardInfo(cardData);
         setUserInfo(userData);
       });
   };
@@ -87,13 +91,9 @@ const UserProvider = ({ children }) => {
   const addAddress = (event) => {
     event.preventDefault();
     api
-      .patch(
-        `/users/${userId}`,
-        { address: cepResults },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      )
+      .post("/address", cepResults, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         toast.success("Endereço cadastrado com sucesso");
         setEnvironment();
@@ -105,13 +105,9 @@ const UserProvider = ({ children }) => {
 
   const removeAddress = () => {
     api
-      .patch(
-        `/users/${userId}`,
-        { address: {} },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      )
+      .delete(`/address/${userAddress.address_id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         toast.success("Endereço removido com sucesso");
         setEnvironment();
@@ -122,17 +118,7 @@ const UserProvider = ({ children }) => {
   };
 
   const addCard = (data) => {
-    api
-      .patch(
-        `/users/${userId}`,
-        { card: data },
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
-      .then((res) => {
-        toast.success("Cartão adicionado com sucesso");
-        setEnvironment();
-      })
-      .catch((err) => "Erro ao adicionar cartão");
+    setUserCardInfo(data);
   };
 
   const removeCard = () => {
@@ -149,21 +135,17 @@ const UserProvider = ({ children }) => {
       .catch((err) => "Erro ao remover cartão");
   };
 
-  const clearCart = async () => {
+  const clearCart = () => {
     setIsLoading(true);
-    await Promise.all(
-      cart.map(async (item) => {
-        await api.delete(`/cart/${item.id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+    api
+      .post("/cart/checkout", "", {
+        headers: { Authorization: `Bearer ${token}` },
       })
-    ).then(() => {
-      setEndCheckout(true);
-      setIsLoading(false);
-      setCart([]);
-    });
+      .then(() => {
+        setEndCheckout(true);
+        setIsLoading(false);
+        setCart([]);
+      });
   };
 
   return (

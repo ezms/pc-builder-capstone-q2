@@ -138,19 +138,19 @@ export const Checkout = () => {
                   <div className="address_info">
                     <div className="info_content">
                       <h3>
-                        <span>Cidade:</span> {userAddress.cidade}
+                        <span>Cidade:</span> {userAddress.city}
                       </h3>
                       <h3>
-                        <span>Logradouro:</span> {userAddress.logradouro}
+                        <span>Logradouro:</span> {userAddress.public_place}
                       </h3>
                       <h3>
-                        <span>Numero:</span> {userAddress.numero}
+                        <span>Numero:</span> {userAddress.number}
                       </h3>
                       <h3>
-                        <span>Estado:</span> {userAddress.estado}
+                        <span>Estado:</span> {userAddress.state}
                       </h3>
                       <h3>
-                        <span>CEP:</span> {userAddress.cep}
+                        <span>CEP:</span> {userAddress.zip_code}
                       </h3>
                     </div>
                     <Button
@@ -202,7 +202,7 @@ export const Checkout = () => {
                         onChange={(e) =>
                           setCepResults({
                             ...cepResults,
-                            numero: e.target.value,
+                            numero: Number(e.target.value),
                           })
                         }
                       />
@@ -212,9 +212,7 @@ export const Checkout = () => {
                         size="md"
                         variant="outlined"
                         disabled={
-                          !Object.values(cepResults).every(
-                            (item) => item.length
-                          )
+                          !Object.values(cepResults).every((item) => item)
                         }
                         onClick={addAddress}
                       >
