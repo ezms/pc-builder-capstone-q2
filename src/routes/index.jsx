@@ -1,7 +1,7 @@
 import { Route, Switch, useHistory } from "react-router";
-import Build from "../pages/Build";
+// import Build from "../pages/Build";
 import Cart from "../pages/Cart";
-import CategoryProducts from "../pages/CategoryProducts";
+// import CategoryProducts from "../pages/CategoryProducts";
 import { Checkout } from "../pages/Checkout";
 import Products from "../pages/Products";
 import Sign from "../pages/Sign";
@@ -14,18 +14,18 @@ const Routes = () => {
       <Route exact path="/">
         <Products />
       </Route>
-      <Route exact path="/build">
+      {/* <Route exact path="/build">
         <Build />
-      </Route>
+      </Route> */}
       <Route exact path="/sign">
         <Sign />
       </Route>
       <Route exact path="/cart">
         <Cart />
       </Route>
-      <Route exact path="/build/:category">
+      {/* <Route exact path="/build/:category">
         <CategoryProducts />
-      </Route>
+      </Route> */}
       <Route exact path="/checkout">
         <Checkout></Checkout>
       </Route>
