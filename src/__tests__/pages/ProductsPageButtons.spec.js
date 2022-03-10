@@ -16,7 +16,6 @@ describe("Products page buttons", () => {
 
         await waitFor(() => {
             expect(screen.getByPlaceholderText("Pesquisar")).toBeTruthy()
-            expect(screen.getAllByText("Monte seu PC")).toBeTruthy()
             expect(screen.getByText("Todos")).toBeTruthy()
         })
 

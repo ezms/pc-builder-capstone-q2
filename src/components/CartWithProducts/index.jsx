@@ -8,7 +8,7 @@ import { useHistory } from "react-router";
 import { useModal } from "../../providers/modal";
 
 const CartWithProducts = () => {
-  const { cart } = useCart();
+  const { cart, setCart } = useCart();
 
   const { setCheckoutAuth, token } = useAuth();
 
@@ -18,12 +18,22 @@ const CartWithProducts = () => {
 
   const removeFromCart = (item) => {
     api
-      .delete(`/cart/${item.id}`, {
+      .delete(`/cart/${item.product_id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
-      .then(() => toast.success(`${item.model} foi removido do carrinho!`));
+      .then(() => {
+        setCart(
+          cart.filter(
+            (_, index, arr) =>
+              arr.indexOf(
+                cart.find((prod) => prod.product_id === item.product_id)
+              ) !== index
+          )
+        );
+        toast.success(`${item.model} foi removido do carrinho!`);
+      });
   };
 
   const checkoutClickHandler = () => {
