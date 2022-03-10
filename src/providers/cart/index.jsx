@@ -22,10 +22,7 @@ export const CartProvider = ({ children }) => {
         (item) =>
           new Promise((res) =>
             setTimeout(() => {
-              api
-                .delete(`/cart/${item.product_id}`, { headers: headers })
-                .then((resp) => console.log(resp))
-                .catch((err) => console.log(err));
+              api.delete(`/cart/${item.product_id}`, { headers: headers });
               res(true);
             }, (timer += 300))
           )
