@@ -39,22 +39,14 @@ const UserProvider = ({ children }) => {
       })
       .then((res) => {
         const addressData = res.data[res.data.length - 1] || {};
-        // const cardData = res.data.card || {};
-        // const userData = res.data || {};
         setUserAddress(addressData);
-        // setUserCardInfo(cardData);
-        // setUserInfo(userData);
       });
     api
       .get(`/user`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
-        // const addressData = res.data[res.data.length - 1] || {};
-        // const cardData = res.data.card || {};
         const userData = res.data || {};
-        // setUserAddress(addressData);
-        // setUserCardInfo(cardData);
         setUserInfo(userData);
       });
   };
@@ -126,17 +118,7 @@ const UserProvider = ({ children }) => {
   };
 
   const addCard = (data) => {
-    api
-      .patch(
-        `/users/${userId}`,
-        { card: data },
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
-      .then((res) => {
-        toast.success("Cartão adicionado com sucesso");
-        setEnvironment();
-      })
-      .catch((err) => "Erro ao adicionar cartão");
+    setUserCardInfo(data);
   };
 
   const removeCard = () => {
@@ -153,21 +135,17 @@ const UserProvider = ({ children }) => {
       .catch((err) => "Erro ao remover cartão");
   };
 
-  const clearCart = async () => {
+  const clearCart = () => {
     setIsLoading(true);
-    await Promise.all(
-      cart.map(async (item) => {
-        await api.delete(`/cart/${item.id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+    api
+      .post("/cart/checkout", "", {
+        headers: { Authorization: `Bearer ${token}` },
       })
-    ).then(() => {
-      setEndCheckout(true);
-      setIsLoading(false);
-      setCart([]);
-    });
+      .then(() => {
+        setEndCheckout(true);
+        setIsLoading(false);
+        setCart([]);
+      });
   };
 
   return (
