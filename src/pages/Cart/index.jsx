@@ -46,7 +46,7 @@ const Cart = () => {
           <ModalDetails />
         </Modal>
       )}
-      <Header cart={false} buttonIn1="Monte seu PC" buttonIn2="Logout" />
+      <Header cart={false} buttonIn1="Produtos" buttonIn2="Logout" />
       <CartContainer>
         <div id="topContainer">
           <h1>Carrinho</h1>
