@@ -104,7 +104,7 @@ const Products = () => {
       <Header
         buttonOut1="Login"
         buttonOut2="Registro"
-        buttonIn1="Monte seu PC"
+        buttonIn1="Produtos"
         buttonIn2="Logout"
       />
       {isOpen && (
